@@ -15,33 +15,34 @@ def dl_progress(count, block_size, total_size):
 
     
 skipped_clips = [];
-for clip in open('clips.txt', 'r'):
-    clip = clip.replace('\n', '')
-    clip_data = clip.split(SEPARATOR)
-    title, slug, mp4_url = clip_data;
-    title = title.replace(' ', '_')
-    regex = re.compile('[^a-zA-Z0-9_]')
-    title = regex.sub('', title)
-    out_filename = title + '_' + slug + '.mp4'
-    output_path = (basepath + out_filename)
-
-    #debug code
-    #print(out_filename)
-
-    if not isfile(output_path):
-      print('\nDownloading clip slug: ' + slug)
-      print('"' + title + '" -> ' + out_filename)
-      print(mp4_url)
-      try:
-          urllib.request.urlretrieve(mp4_url, output_path, reporthook=dl_progress)
-          print('\nDone.')
-      except:
-        skipped_clips.append((out_filename, mp4_url))
-        print('\nError: ' + str(sys.exc_info()[0]))
-        print('\n' + str(sys.exc_info()[1]))
-        print('\n' + str(sys.exc_info()[2]))
-    else:
-      print("\n"+out_filename+" already downloaded. Skipping...\n")
+with open('clips.txt', 'r') as clips_file:
+    for clip in clips_file:
+        clip = clip.replace('\n', '')
+        clip_data = clip.split(SEPARATOR)
+        title, slug, mp4_url = clip_data;
+        title = title.replace(' ', '_')
+        regex = re.compile('[^a-zA-Z0-9_]')
+        title = regex.sub('', title)
+        out_filename = title + '_' + slug + '.mp4'
+        output_path = (basepath + out_filename)
+    
+        #debug code
+        #print(out_filename)
+    
+        if not isfile(output_path):
+          print('\nDownloading clip slug: ' + slug)
+          print('"' + title + '" -> ' + out_filename)
+          print(mp4_url)
+          try:
+              urllib.request.urlretrieve(mp4_url, output_path, reporthook=dl_progress)
+              print('\nDone.')
+          except:
+            skipped_clips.append((out_filename, mp4_url))
+            print('\nError: ' + str(sys.exc_info()[0]))
+            print('\n' + str(sys.exc_info()[1]))
+            print('\n' + str(sys.exc_info()[2]))
+        else:
+          print("\n"+out_filename+" already downloaded. Skipping...\n")
 
 print('\nFinished downloading all the videos.')
 
